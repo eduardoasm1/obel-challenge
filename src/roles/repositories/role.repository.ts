@@ -47,7 +47,18 @@ export class RoleRepository {
   }
 
   async update(id: string, data: UpdateRoleDto): Promise<PrismaRole> {
-    return this.prisma.role.update({ where: { id }, data });
+    try {
+      const role = await this.prisma.role.update({ where: { id }, data });
+      return role;
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException('Role with this name already exists');
+      }
+      throw error;
+    }
   }
 
   async upsert(data: {
