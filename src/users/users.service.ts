@@ -7,6 +7,8 @@ import {
 import { UserRepository } from './repositories/user.repository';
 import { UserMapper } from './mappers/user.mapper';
 import type { User } from './interfaces/user.interface';
+import { RolesService } from '../roles/roles.service';
+import { Role } from '../roles/interfaces/role.interface';
 
 const DEFAULT_USERS = [
   { id: 'user-1', email: 'john@example.com', name: 'John Doe' },
@@ -15,7 +17,10 @@ const DEFAULT_USERS = [
 
 @Injectable()
 export class UsersService implements OnModuleInit {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly roleService: RolesService,
+  ) {}
 
   async onModuleInit(): Promise<void> {
     await Promise.all(DEFAULT_USERS.map((u) => this.userRepository.upsert(u)));
@@ -54,7 +59,8 @@ export class UsersService implements OnModuleInit {
     return UserMapper.toResponse(updated);
   }
 
-  async findRoleIds(userId: string): Promise<string[]> {
-    return (await this.findOne(userId)).roleIds;
+  async findRoleIds(userId: string): Promise<Role[]> {
+    const userRoleIds = (await this.findOne(userId)).roleIds;
+    return Promise.all(userRoleIds.map((id) => this.roleService.findOne(id)));
   }
 }

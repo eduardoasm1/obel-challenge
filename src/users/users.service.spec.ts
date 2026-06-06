@@ -2,6 +2,7 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { UserRepository } from './repositories/user.repository';
+import { RolesService } from '../roles/roles.service';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -12,6 +13,10 @@ describe('UsersService', () => {
     createUserRole: jest.fn(),
     deleteUserRole: jest.fn(),
     upsert: jest.fn(),
+  };
+
+  const mockRolesService = {
+    findOne: jest.fn(),
   };
 
   const mockUser = {
@@ -30,6 +35,10 @@ describe('UsersService', () => {
         {
           provide: UserRepository,
           useValue: mockUserRepository,
+        },
+        {
+          provide: RolesService,
+          useValue: mockRolesService,
         },
       ],
     }).compile();
@@ -101,15 +110,47 @@ describe('UsersService', () => {
     );
   });
 
-  it('should list role ids assigned to a user', async () => {
+  it('should list role assigned to a user', async () => {
     mockUserRepository.findByIdOrThrow.mockResolvedValue({
       ...mockUser,
       roles: [{ roleId: 'role-1' }, { roleId: 'role-2' }],
     });
 
-    const roleIds = await service.findRoleIds('user-1');
+    const mockRole1 = {
+      id: 'role-1',
+      name: 'Admin',
+      description: 'Full access role',
+      type: 'system',
+      scope: 'global',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-    expect(roleIds).toEqual(['role-1', 'role-2']);
+    const mockRole2 = {
+      id: 'role-2',
+      name: 'User',
+      description: 'Standard user role',
+      type: 'system',
+      scope: 'global',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    mockRolesService.findOne
+      .mockResolvedValueOnce(mockRole1)
+      .mockResolvedValueOnce(mockRole2);
+
+    const roles = await service.findRoleIds('user-1');
+
+    expect(roles).toHaveLength(2);
+    expect(roles[0]).toMatchObject({
+      id: 'role-1',
+      name: 'Admin',
+    });
+    expect(roles[1]).toMatchObject({
+      id: 'role-2',
+      name: 'User',
+    });
   });
 
   it('should throw when a user does not exist', async () => {

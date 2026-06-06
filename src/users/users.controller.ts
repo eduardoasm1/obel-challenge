@@ -15,6 +15,7 @@ import {
 } from '@nestjs/swagger';
 import type { User } from './interfaces/user.interface';
 import { UsersService } from './users.service';
+import { Role } from 'src/roles/interfaces/role.interface';
 
 @ApiBearerAuth('token-swagger')
 @ApiTags('users')
@@ -46,7 +47,7 @@ export class UsersController {
   @Get(':userId/roles')
   @ApiOperation({ summary: 'List roles assigned to a user' })
   @ApiResponse({ status: 200, description: 'Roles returned successfully' })
-  async findUserRoles(@Param('userId') userId: string): Promise<string[]> {
+  async findUserRoles(@Param('userId') userId: string): Promise<Role[]> {
     return this.usersService.findRoleIds(userId);
   }
 }
