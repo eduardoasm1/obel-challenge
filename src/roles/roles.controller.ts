@@ -1,15 +1,20 @@
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import type { Role } from './interfaces/role.interface';
 import { RolesService } from './roles.service';
 
 @ApiTags('roles')
+@ApiBearerAuth('token-swagger')
 @Controller('roles')
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
-
   @Post()
   @ApiOperation({ summary: 'Create a role' })
   @ApiResponse({ status: 201, description: 'Role created successfully' })

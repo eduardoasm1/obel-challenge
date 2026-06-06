@@ -31,6 +31,16 @@ async function bootstrap() {
     .setDescription('API documentation for Obel Challenge')
     .setVersion('1.0')
     .addTag('api')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        name: 'Token',
+        description: 'Introduce your token',
+        in: 'header',
+      },
+      'token-swagger',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

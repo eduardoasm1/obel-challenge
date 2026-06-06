@@ -7,10 +7,16 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import type { User } from './interfaces/user.interface';
 import { UsersService } from './users.service';
 
+@ApiBearerAuth('token-swagger')
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
