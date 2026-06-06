@@ -1,5 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 import { Role as PrismaRole } from '@prisma/client';
 import { CreateRoleDto } from '../dto/create-role.dto';
 import { UpdateRoleDto } from '../dto/update-role.dto';
@@ -9,8 +14,18 @@ export class RoleRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreateRoleDto): Promise<PrismaRole> {
-    const role: PrismaRole = await this.prisma.role.create({ data });
-    return role;
+    try {
+      const role: PrismaRole = await this.prisma.role.create({ data });
+      return role;
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException('Role with this name already exists');
+      }
+      throw error;
+    }
   }
 
   async findAll(): Promise<PrismaRole[]> {

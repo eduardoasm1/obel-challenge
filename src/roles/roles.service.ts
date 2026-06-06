@@ -8,14 +8,14 @@ import type { Role } from './interfaces/role.interface';
 const DEFAULT_ROLES = [
   {
     id: 'role-1',
-    name: 'Admin',
+    name: 'admin',
     description: 'Full access role',
     type: 'system',
     scope: 'global',
   },
   {
     id: 'role-2',
-    name: 'User',
+    name: 'user',
     description: 'Standard user role',
     type: 'system',
     scope: 'global',
