@@ -34,6 +34,8 @@ export class UsersService implements OnModuleInit {
   async assignRole(userId: string, roleId: string): Promise<User> {
     await this.userRepository.findByIdOrThrow(userId);
 
+    await this.roleService.findOne(roleId);
+
     const existing = await this.userRepository.findUserRole(userId, roleId);
     if (existing) {
       throw new ConflictException(

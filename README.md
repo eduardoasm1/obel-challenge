@@ -121,6 +121,28 @@ El proyecto utiliza SQLite como base de datos con Prisma ORM. El esquema incluye
 - **Roles**: Roles disponibles
 - **UserRole**: Relación muchos a muchos entre usuarios y roles
 
+### Datos Iniciales
+
+Al iniciar el servidor, se crean automáticamente los siguientes datos por defecto:
+
+#### Roles por defecto:
+- **Admin** (id: role-1)
+  - Descripción: Full access role
+  - Tipo: system
+  - Scope: global
+
+- **User** (id: role-2)
+  - Descripción: Standard user role
+  - Tipo: system
+  - Scope: global
+
+#### Usuarios por defecto:
+- **John Doe** (id: user-1)
+  - Email: john@example.com
+
+- **Jane Doe** (id: user-2)
+  - Email: jane@example.com
+
 ## 🛠️ Tecnologías
 
 - **Framework**: NestJS
