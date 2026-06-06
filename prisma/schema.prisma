@@ -17,6 +17,32 @@ model User {
   name      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+  roles     UserRole[]
+ 
   @@map("users")
+
+}
+ 
+model Role {
+  id          String     @id @default(uuid())
+  name        String
+  description String?
+  type        String?
+  scope       String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  users       UserRole[]
+ 
+  @@map("roles")
+}
+ 
+model UserRole {
+  userId     String
+  roleId     String
+  assignedAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role       Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+ 
+  @@id([userId, roleId])
+  @@map("user_roles")
 }
